@@ -195,7 +195,7 @@ namespace VehicleDataExtractor
                 { 133, 133 }, { 134, 134 }, { 135, 135 }, { 136, 136 }, { 137, 137 }, { 138, 138 }, { 139, 139 },
                 { 140, 140 }, { 141, 141 }, { 142, 142 }, { 143, 143 }, { 144, 144 }, { 145, 145 }, { 146, 146 },
                 { 147, 147 }, { 148, 148 }, { 149, 149 }, { 150, 150 }, { 151, 151 }, { 152, 152 }, { 153, 153 },
-                { 154, 154 }, { 155, 155 }, { 156, 156 }, { 157, 157 }, { 158, 158 }, { 159, 159 }, { 160,160 }
+                { 154, 154 }, { 155, 155 }, { 156, 156 }, { 157, 157 }, { 158, 158 }, { 159, 159 }, { 160, 160 }
             };
 
             return colorMap.ContainsKey(paintIndex) ? colorMap[paintIndex] : -1;
@@ -233,13 +233,10 @@ namespace VehicleDataExtractor
             var extras = new List<VehicleExtra>();
             for (int i = 1; i <= 12; i++)
             {
-                if (!NativeFunction.Natives.DOES_EXTRA_EXIST<bool>(vehicle, i))
+                if (NativeFunction.Natives.DOES_EXTRA_EXIST<bool>(vehicle, i) &&
+                    NativeFunction.Natives.IS_VEHICLE_EXTRA_TURNED_ON<bool>(vehicle, i))
                 {
-                    extras.Add(new VehicleExtra(i, false));
-                }
-                else
-                {
-                    extras.Add(new VehicleExtra(i, NativeFunction.Natives.IS_VEHICLE_EXTRA_TURNED_ON<bool>(vehicle, i)));
+                    extras.Add(new VehicleExtra(i, true));
                 }
             }
             return extras;
