@@ -120,6 +120,23 @@ namespace VehicleDataExtractor
                 return;
             }
 
+                        GameFiber.Yield();
+
+            string modelName;
+            try
+            {
+                modelName = NativeFunction.Natives.GET_DISPLAY_NAME_FROM_VEHICLE_MODEL<string>(vehicle.Model.Hash);
+                if (string.IsNullOrEmpty(modelName) || modelName == "CARNOTFOUND")
+                {
+                    modelName = vehicle.Model.Name.ToUpper();
+                }
+            }
+            catch (Exception ex)
+            {
+                Game.LogTrivial($"Failed to get vehicle model name: {ex.Message}");
+                modelName = vehicle.Model.Name.ToUpper();
+            }
+
             // Get primary and secondary paint indices
             int primaryColor = 0, secondaryColor = 0;
             NativeFunction.Natives.GET_VEHICLE_COLOURS<int>(vehicle, ref primaryColor, ref secondaryColor);
@@ -144,8 +161,8 @@ namespace VehicleDataExtractor
 
             var data = new DispatchableVehicle
             {
-                DebugName = $"{vehicle.Model.Name}_PB",
-                ModelName = vehicle.Model.Name.ToUpper(),
+                DebugName = $"{modelName}_PB",
+                ModelName = modelName,
                 RequiresDLC = IsDLCVehicle(vehicle.Model.Hash),
                 RequiredPrimaryColorID = primaryColorID,
                 RequiredSecondaryColorID = secondaryColorID,
